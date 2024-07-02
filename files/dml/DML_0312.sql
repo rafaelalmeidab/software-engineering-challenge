@@ -1,0 +1,2 @@
+INSERT INTO dbname.usuarios (NOME,EMAIL,SENHA,DTHRINSERT,DTHRUPDATE) VALUES
+	 ('admin','abc@hotmail.com',MD5('1234'),'2024-01-30 21:47:48','2024-01-30 21:47:48'),
