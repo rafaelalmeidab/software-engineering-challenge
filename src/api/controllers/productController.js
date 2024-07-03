@@ -1,7 +1,4 @@
 const dotenv = require("dotenv");
-const jwt    = require('jsonwebtoken');
-const md5    = require('../../utils/md5.js');      
-
 const { createProduct, deleteProduct, findAllProducts, findProductById, updateProduct } = require('../../services/productService.js');
 
 dotenv.config();

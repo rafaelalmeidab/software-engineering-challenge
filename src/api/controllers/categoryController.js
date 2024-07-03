@@ -1,101 +1,63 @@
 const dotenv = require("dotenv");
-const jwt    = require('jsonwebtoken');
-const md5    = require('../../utils/md5.js');      
-
-const { createUser, findAllUsers, findUserByEmail, findUserByUsername } = require('../../services/categoryService.js');
+const { createCategory, deleteCategory, findAllCategories, findCategoryById, updateCategory } = require('../../services/categoryService.js');
 
 dotenv.config();
 const SECRET = process.env.SECRET;
 
-async function login(req){
-    let user = req.body.username;
-    var data = await findUserByUsername(user);
+async function erase(req) {
+    let id = req.body.id;
+    var data = await findCategoryById(id);
 
-    if(data.length === 0){
+    if (data.length === 0) {
         let response = {
             statusCode: 401,
-            message: "Usuário não encontrado!",
-            data:{
-                username: user
+            message: "Categoria inexistente!",
+            data: {
+                category: id
             }
         };
-    
+
         return response;
     }
 
-    const validatePassword = md5.comparePassword(req.body.password, data[0].password);
-    if(!validatePassword){
-        var response = {
-            statusCode: 401,
-            body : {
-                message: "Usuário e/ou senha não encontrado(s)!"
-            }
-        };
-    
-        return response;
-    }
+    var dataCategory = data[0];
 
-    const token = jwt.sign({user: req.body.user, idUser: data[0].id}, SECRET, {expiresIn:  "20m"});
-    var response = {
-        statusCode: 200,
-        body : {
-            message: "Login realizado com sucesso!",
-            token: token
-        }
-    };
-    
-    return response;    
-}
-
-async function register(req){
-    let user = req.body.username;
-    var data = await findUserByUsername(user);
-
-    if(data.length !== 0){
-        let response = {
-            statusCode: 401,
-            message: "Nome de usuário se encontra em uso!",
-            data:{
-                username: user
-            }
-        };
-    
-        return response;
-    }
-
-    let email = req.body.email;
-    var data = await findUserByEmail(email);
-
-    if(data.length !== 0){
-        var response = {
-            statusCode: 401,
-            message: "Email informado se encontra em uso!",
-            data:{
-                username: user
-            }
-        };
-    
-        return response;
-    }
-
-    const userData = {
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password
-    };
-
-    var data = await createUser(userData);
+    var data = await deleteCategory(id);
 
     var response = {
         statusCode: 200,
-        body : {
-            message: "Usuário criado com sucesso!",
-            username: req.body.username,
-            email: req.body.email
+        body: {
+            message: "Categoria excluída com sucesso!",
+            category: dataCategory.id,
+            name: dataCategory.name,
+            description: dataCategory.description
         }
     };
-    
-    return response;    
+
+    return response;
 }
 
-module.exports = { login, register };
+async function list() {
+    var data = await findAllCategories();
+
+    if (data.length === 0) {
+        let response = {
+            statusCode: 401,
+            message: "Não existem categorias cadastradas!"
+        };
+
+        return response;
+    }
+
+    var response = {
+        statusCode: 200,
+        body: {
+            message: "Lista de categorias.",
+            data: data
+        }
+    };
+
+    return response;
+}
+
+module.exports = { erase, list };

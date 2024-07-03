@@ -1,5 +1,4 @@
 const dotenv = require("dotenv");
-
 const { findAllUsers } = require('../../services/userService.js');
 
 dotenv.config();
