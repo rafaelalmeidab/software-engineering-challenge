@@ -1,6 +1,6 @@
 const jwt    = require('jsonwebtoken');
 const dotenv = require("dotenv");
-const MD5    = require('../../utils/md5Crypto.js');      
+const MD5    = require('../../utils/md5.js');      
 const db     = require('../../services/db.js');
 const helper = require('../../helper.js');
 
@@ -25,7 +25,7 @@ async function login(req){
         return response;
     }
 
-    const validacaoSenha = MD5.compararMD5(req.body.password, data[0].SENHA);
+    const validacaoSenha = MD5.comparePassword(req.body.password, data[0].SENHA);
     if(!validacaoSenha){
         var response = {
             statusCode: 401,

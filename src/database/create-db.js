@@ -1,36 +1,30 @@
-const mysql = require('mysql2/promise');
-const sequelize = require('dotenv');
+const mysql = require('mysql');
+require('dotenv').config();
 
-// Carrega variáveis de ambiente do arquivo .env
-dotenv.config();
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME } = process.env;
 
-// Configuração de conexão com o MySQL
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  port: process.env.DB_PORT || 3306,
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  port: DB_PORT
 });
 
-// Nome do banco de dados a ser criado
-const databaseName = process.env.DB_NAME || 'dasadb';
-
-async function createDatabase() {
-  try {
-    // Conecta ao MySQL
-    await connection.connect();
-
-    // Cria o banco de dados se não existir
-    await connection.query(`CREATE DATABASE IF NOT EXISTS ${databaseName}`);
-
-    console.log(`Banco de dados '${databaseName}' criado com sucesso!`);
-  } catch (error) {
-    console.error('Erro ao criar o banco de dados:', error);
-  } finally {
-    // Fecha a conexão
-    await connection.end();
+connection.connect((err) => {
+  if (err) {
+    console.error('Erro ao conectar:', err);
+    return;
   }
-}
+  console.log('Conexão bem-sucedida ao MySQL.');
 
-// Chama a função para criar o banco de dados ao iniciar o script
-createDatabase();
+  // Criação do banco de dados
+  connection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;`, (err, result) => {
+    if (err) {
+      console.error('Erro ao criar o banco de dados:', err);
+      connection.end();
+      return;
+    }
+    console.log(`Banco de dados '${DB_NAME}' criado com sucesso.`);
+    connection.end();
+  });
+});
