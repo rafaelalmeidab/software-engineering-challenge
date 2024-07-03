@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 const jwt    = require('jsonwebtoken');
 const md5    = require('../../utils/md5.js');      
 
-const { createUser, findAllUsers, findUserByEmail, findUserByUsername } = require('../../services/userService.js');
+const { createUser, findAllUsers, findUserByEmail, findUserByUsername } = require('../../services/categoryService.js');
 
 dotenv.config();
 const SECRET = process.env.SECRET;

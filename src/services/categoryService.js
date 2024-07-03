@@ -1,40 +1,48 @@
 const db     = require('./dbService.js');
 const helper = require('../helpers/helper.js');
 
-async function createUser(userData){
-  const sql = "INSERT INTO users (username, email, password) VALUES ('" + userData.username + "', '" + userData.email + "',md5(" + userData.password + "))";
+async function createCategory(categoryData){
+  const sql    = "INSERT INTO users (title, description, owner_id) VALUES (?, ?, ?)";
+  const values = [categoryData.title, categoryData.description, categoryData.owner_id];
+  const rows   = await db.query(sql, values);
+  const data   = helper.emptyOrRows(rows);
+    
+  return data;
+}
+
+async function deleteCategory(categoryId) {
+  const sql  = "DELETE FROM categories WHERE id = ?";
+  const rows = await db.query(sql, [categoryId]);
+  const data = helper.emptyOrRows(rows);
+
+  return data;
+}
+
+async function findAllCategories(){
+  const sql  = "SELECT id, title, description, owner_id, created_at FROM categories";
   const rows = await db.query(sql);
   const data = helper.emptyOrRows(rows);
     
   return data;
 }
 
-async function findAllUsers(){
-  const sql = "SELECT id, username, password FROM users";
+async function findCategoryById(categoryId){
+  const sql  = "SELECT id, title, description FROM categories WHERE id = ?";
+  const rows = await db.query(sql, [categoryId]);
+  const data = helper.emptyOrRows(rows);
+
+  return data;
+}
+
+async function updateCategory(categoryData){
+  const sql  = "INSERT INTO users (title, description, owner_id) VALUES ";
+  sql = sql + "('" + categoryData.title + "', '" + categoryData.description + "'," + categoryData.owner_id + ")";
   const rows = await db.query(sql);
   const data = helper.emptyOrRows(rows);
     
   return data;
 }
-
-async function findUserByEmail(email){
-  const sql = "SELECT id, username, email FROM users WHERE email = '" + email + "'";
-  const rows = await db.query(sql);
-  const data = helper.emptyOrRows(rows);
-
-
-  return data;
-}
-
-async function findUserByUsername(user){
-  const sql = "SELECT id, username, password FROM users WHERE username = '" + user + "'";
-  const rows = await db.query(sql);
-  const data = helper.emptyOrRows(rows);
-
-  return data;
-}
-
 
 module.exports = {
-  createUser, findAllUsers, findUserByEmail, findUserByUsername
+  createCategory, deleteCategory, findAllCategories, findCategoryById, updateCategory
 }

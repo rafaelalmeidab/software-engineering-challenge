@@ -2,45 +2,88 @@ const dotenv = require("dotenv");
 const jwt    = require('jsonwebtoken');
 const md5    = require('../../utils/md5.js');      
 
-const { createUser, findAllUsers, findUserByEmail, findUserByUsername } = require('../../services/userService.js');
+const { createProduct, deleteProduct, findAllProducts, findProductById, updateProduct } = require('../../services/productService.js');
 
 dotenv.config();
 const SECRET = process.env.SECRET;
 
-async function login(req){
-    let user = req.body.username;
-    var data = await findUserByUsername(user);
+async function erase(req){
+    let id = req.body.id;
+    var data = await findProductById(id);
 
     if(data.length === 0){
         let response = {
             statusCode: 401,
-            message: "Usuário não encontrado!",
+            message: "Produto inexistente!",
             data:{
-                username: user
+                product: id
             }
         };
     
         return response;
     }
 
-    const validatePassword = md5.comparePassword(req.body.password, data[0].password);
-    if(!validatePassword){
-        var response = {
-            statusCode: 401,
-            body : {
-                message: "Usuário e/ou senha não encontrado(s)!"
-            }
-        };
-    
-        return response;
-    }
+    var dataProduct = data[0];
 
-    const token = jwt.sign({user: req.body.user, idUser: data[0].id}, SECRET, {expiresIn:  "20m"});
+    var data = await deleteProduct(id);
+
     var response = {
         statusCode: 200,
         body : {
-            message: "Login realizado com sucesso!",
-            token: token
+            message: "Produto excluído com sucesso!",
+            product: dataProduct.id,
+            title: dataProduct.title,
+            description: dataProduct.description,
+            price: dataProduct.price,
+            category_id: dataProduct.category_id,
+            owner: dataProduct.owner
+        }
+    };
+    
+    return response;    
+}
+
+
+async function list(){
+    var data = await findAllProducts();
+
+    if(data.length === 0){
+        let response = {
+            statusCode: 401,
+            message: "Não existem produtos cadastrados!"
+        };
+    
+        return response;
+    }
+
+    var response = {
+        statusCode: 200,
+        body : {
+            message: "Lista de produtos.",
+            data: data
+        }
+    };
+    
+    return response;    
+}
+
+async function list2(){
+    var data = await findAllProducts(true);
+
+    if(data.length === 0){
+        let response = {
+            statusCode: 401,
+            message: "Não existem produtos sem categoria cadastrados!"
+        };
+    
+        return response;
+    }
+
+    var response = {
+        statusCode: 200,
+        body : {
+            message: "Lista de produtos sem categoria.",
+            data: data
         }
     };
     
@@ -63,8 +106,6 @@ async function register(req){
         return response;
     }
 
-    let email = req.body.email;
-    var data = await findUserByEmail(email);
 
     if(data.length !== 0){
         var response = {
@@ -80,7 +121,6 @@ async function register(req){
 
     const userData = {
         username: req.body.username,
-        email: req.body.email,
         password: req.body.password
     };
 
@@ -91,11 +131,10 @@ async function register(req){
         body : {
             message: "Usuário criado com sucesso!",
             username: req.body.username,
-            email: req.body.email
         }
     };
     
     return response;    
 }
 
-module.exports = { login, register };
+module.exports = { erase, list, list2, register };

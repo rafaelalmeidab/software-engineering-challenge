@@ -39,9 +39,9 @@ router.get('/category/list', loginAuth.auth, async (req, res, next) => {
   }
 });
 
-router.delete('/category/delete', loginAuth.auth, async (req, res, next) => {
+router.delete('/category/erase', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await categoryController.delete();
+    const ans = await categoryController.erase(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while deleting categories', err.message);
@@ -51,7 +51,7 @@ router.delete('/category/delete', loginAuth.auth, async (req, res, next) => {
 
 router.post('/category/add', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await categoryController.add();
+    const ans = await categoryController.add(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while adding categories', err.message);
@@ -61,7 +61,7 @@ router.post('/category/add', loginAuth.auth, async (req, res, next) => {
 
 router.put('/category/put', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await categoryController.put();
+    const ans = await categoryController.put(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while putting categories', err.message);
@@ -80,7 +80,7 @@ router.get('/product/list', loginAuth.auth, async (req, res, next) => {
   }
 });
 
-router.get('/product/list2', loginAuth.auth, async (req, res, next) => {
+router.get('/product/list/none-category', loginAuth.auth, async (req, res, next) => {
   try {
     const ans = await productController.list2();
     res.status(ans.statusCode).send(ans);
@@ -90,9 +90,9 @@ router.get('/product/list2', loginAuth.auth, async (req, res, next) => {
   }
 });
 
-router.delete('/product/delete', loginAuth.auth, async (req, res, next) => {
+router.delete('/product/erase', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await productController.delete();
+    const ans = await productController.erase(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while deleting products', err.message);
@@ -102,7 +102,7 @@ router.delete('/product/delete', loginAuth.auth, async (req, res, next) => {
 
 router.post('/product/add', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await productController.add();
+    const ans = await productController.add(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while adding products', err.message);
@@ -112,7 +112,7 @@ router.post('/product/add', loginAuth.auth, async (req, res, next) => {
 
 router.put('/product/put', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await productController.put();
+    const ans = await productController.put(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while putting products', err.message);
@@ -122,7 +122,7 @@ router.put('/product/put', loginAuth.auth, async (req, res, next) => {
 
 router.put('/product/category', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await productController.category();
+    const ans = await productController.category(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while putting products', err.message);
