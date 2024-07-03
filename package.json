@@ -1,12 +1,11 @@
 {
-  "name": "software-engineering-challenge",
+  "name": "user-authentication",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/database/create-db.js && node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -19,13 +18,11 @@
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
-    "mysql2": "^3.10.2",
+    "mysql2": "^3.9.1",
     "passport": "^0.7.0",
-    "passport-local": "^1.0.0",
-    "sequelize": "^6.37.3"
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.3",
-    "sequelize-cli": "^6.6.2"
+    "nodemon": "^3.0.3"
   }
 }

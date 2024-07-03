@@ -9,7 +9,7 @@ dotenv.config()
 
 app.use(express.json());
 
-// const routes = require("./api/routes/routes.js");
-// app.use("", routes);
+const routes = require("./api/routes/routes.js");
+app.use("", routes);
 
 module.exports = app;
