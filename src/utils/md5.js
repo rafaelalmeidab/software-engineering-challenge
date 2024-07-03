@@ -1,3 +1,4 @@
+
 const crypto = require('crypto');
 
 function createMD5Hash(string) {
@@ -7,7 +8,7 @@ function createMD5Hash(string) {
 }
 
 function comparePassword(normalString, md5String) {
-  const md5NormalString = create(normalString);
+  const md5NormalString = createMD5Hash(normalString);
   return md5NormalString === md5String;
 }
 

@@ -1,13 +1,11 @@
 const dotenv = require("dotenv");
-const db     = require('../../services/db.js');
-const helper = require('../../helper.js');
+
+const { findAllUsers } = require('../../services/userService.js');
 
 dotenv.config();
 
 async function users(){
-    const sql = "SELECT ID, NOME, SENHA FROM usuarios";
-    const rows = await db.query(sql);
-    const data = helper.emptyOrRows(rows);
+    const data = findAllUsers();
     
     return data;
 }

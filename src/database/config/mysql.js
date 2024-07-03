@@ -3,7 +3,7 @@ const config = {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: '',
+        database: 'dasadb',
         port: 3306,
         connectionLimit: 10,
         connectTimeout: 60000
