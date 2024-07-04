@@ -61,7 +61,7 @@ router.post('/category/add', loginAuth.auth, async (req, res, next) => {
 
 router.put('/category/put', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await categoryController.put(req);
+    const ans = await categoryController.update(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while putting categories', err.message);
