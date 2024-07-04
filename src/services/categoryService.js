@@ -1,9 +1,9 @@
 const db     = require('./dbService.js');
 const helper = require('../helpers/helper.js');
 
-async function createCategory(categoryData){
-  const sql    = "INSERT INTO users (title, description, owner_id) VALUES (?, ?, ?)";
-  const values = [categoryData.title, categoryData.description, categoryData.owner_id];
+async function addCategory(categoryData){
+  const sql    = "INSERT INTO categories (title, description, owner_id) VALUES (?, ?, ?)";
+  const values = [categoryData.title, categoryData.description, global.loggedInUserId];
   const rows   = await db.query(sql, values);
   const data   = helper.emptyOrRows(rows);
     
@@ -34,9 +34,17 @@ async function findCategoryById(categoryId){
   return data;
 }
 
+async function findCategoryByTitle(categoryTitle){
+  const sql  = "SELECT id, title, description FROM categories WHERE title = ?";
+  const rows = await db.query(sql, [categoryTitle]);
+  const data = helper.emptyOrRows(rows);
+
+  return data;
+}
+
 async function updateCategory(categoryData){
   const sql  = "INSERT INTO users (title, description, owner_id) VALUES ";
-  sql = sql + "('" + categoryData.title + "', '" + categoryData.description + "'," + categoryData.owner_id + ")";
+  sql = sql + "('" + categoryData.title + "', '" + categoryData.description + "'," + global.loggedInUserId + ")";
   const rows = await db.query(sql);
   const data = helper.emptyOrRows(rows);
     
@@ -44,5 +52,5 @@ async function updateCategory(categoryData){
 }
 
 module.exports = {
-  createCategory, deleteCategory, findAllCategories, findCategoryById, updateCategory
+  addCategory, deleteCategory, findAllCategories, findCategoryById, findCategoryByTitle, updateCategory
 }

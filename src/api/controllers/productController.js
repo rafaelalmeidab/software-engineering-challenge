@@ -1,8 +1,127 @@
 const dotenv = require("dotenv");
-const { createProduct, deleteProduct, findAllProducts, findProductById, updateProduct } = require('../../services/productService.js');
+const { addProduct, deleteProduct, findAllProducts, findProductById, findProductByTitle, updateProduct } = require('../../services/productService.js');
+const { findCategoryById } = require("../../services/categoryService.js");
 
 dotenv.config();
 const SECRET = process.env.SECRET;
+
+async function add(req){
+    var data = productData = req.body;
+    const emptyFields = [];
+
+    if (!data.title) { emptyFields.push("title"); }
+    if (!data.description) { emptyFields.push("description"); }
+    if (!data.price) { emptyFields.push("price"); }
+
+    if(emptyFields.length > 0) {
+        let response = {
+            statusCode: 401,
+            message: `Os seguintes campos devem ser preenchidos: ${emptyFields.join(", ")}`
+        }
+
+        return response;
+    }
+    
+    let title = req.body.title;
+    var data  = await findProductByTitle(title);
+
+    if(data.length !== 0){
+        let response = {
+            statusCode: 401,
+            message: "Produto já cadastrado no banco!",
+            data:{
+                id: data[0].id,
+                title: data[0].title,
+                description: data[0].description
+            }
+        };
+    
+        return response;
+    }
+
+    var data = await addProduct(productData);
+    data = data[0];
+
+    var response = {
+        statusCode: 200,
+        message: "Produto adicionado com sucesso!",
+        body : {
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            category_id: data.category_id,
+            owner_id: data.owner_id
+        }
+    };
+    
+    return response;    
+}
+
+
+async function category(req){
+    var data = productData = req.body;
+    const emptyFields = [];
+
+    if (!productData.id) { emptyFields.push("id"); }
+    if (!productData.category_id) { emptyFields.push("category_id"); }
+
+    if(emptyFields.length > 0) {
+        let response = {
+            statusCode: 401,
+            message: `Os seguintes campos devem ser preenchidos: ${emptyFields.join(", ")}`
+        }
+
+        return response;
+    }
+    
+    let id = req.body.id;
+    var data  = await findProductById(id);
+
+    if(data.length !== 0){
+        let response = {
+            statusCode: 401,
+            message: "Categoria inexistente.",
+            data:{
+                title: req.body.title,
+                description: req.body.description
+            }
+        };
+    
+        return response;
+    }
+
+    if(data[0].category_id){
+        let response = {
+            statusCode: 401,
+            message: "Produto com categoria cadastrada.",
+            data:{
+                id: data[0].id,
+                title: data[0].title,
+                description: data[0].description,
+                category_id: data[0].category_id
+            }
+        };
+    
+        return response;
+    }
+
+    var data = await updateProductCategory(productData);
+    data = data[0];
+
+    var response = {
+        statusCode: 200,
+        message: "Categoria associada a produto com sucesso!",
+        body : {
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            category_id: data.category_id,
+            owner_id: data.owner_id
+        }
+    };
+    
+    return response;    
+}
 
 async function erase(req){
     let id = req.body.id;
@@ -26,8 +145,8 @@ async function erase(req){
 
     var response = {
         statusCode: 200,
+        message: "Produto excluído com sucesso!",
         body : {
-            message: "Produto excluído com sucesso!",
             product: dataProduct.id,
             title: dataProduct.title,
             description: dataProduct.description,
@@ -55,8 +174,8 @@ async function list(){
 
     var response = {
         statusCode: 200,
+        message: "Lista de produtos.",
         body : {
-            message: "Lista de produtos.",
             data: data
         }
     };
@@ -78,8 +197,8 @@ async function list2(){
 
     var response = {
         statusCode: 200,
+        message: "Lista de produtos sem categoria.",
         body : {
-            message: "Lista de produtos sem categoria.",
             data: data
         }
     };
@@ -108,7 +227,7 @@ async function register(req){
         var response = {
             statusCode: 401,
             message: "Email informado se encontra em uso!",
-            data:{
+            body:{
                 username: user
             }
         };
@@ -134,4 +253,4 @@ async function register(req){
     return response;    
 }
 
-module.exports = { erase, list, list2, register };
+module.exports = { add, category, erase, list, list2, register };

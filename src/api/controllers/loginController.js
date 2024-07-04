@@ -10,7 +10,8 @@ const SECRET = process.env.SECRET;
 async function login(req){
     let user = req.body.username;
     var data = await findUserByUsername(user);
-
+    
+    
     if(data.length === 0){
         let response = {
             statusCode: 401,
@@ -19,27 +20,26 @@ async function login(req){
                 username: user
             }
         };
-    
+        
         return response;
     }
-
+    
     const validatePassword = md5.comparePassword(req.body.password, data[0].password);
     if(!validatePassword){
         var response = {
             statusCode: 401,
-            body : {
-                message: "Usuário e/ou senha não encontrado(s)!"
-            }
+            message: "Usuário e/ou senha não encontrado(s)!"
         };
-    
+        
         return response;
     }
-
+    
     const token = jwt.sign({user: req.body.user, idUser: data[0].id}, SECRET, {expiresIn:  "20m"});
+    global.loggedInUserId = data[0].id;
     var response = {
         statusCode: 200,
+        message: "Login realizado com sucesso!",
         body : {
-            message: "Login realizado com sucesso!",
             token: token
         }
     };
@@ -55,7 +55,7 @@ async function register(req){
         let response = {
             statusCode: 401,
             message: "Nome de usuário se encontra em uso!",
-            data:{
+            body:{
                 username: user
             }
         };
@@ -70,7 +70,7 @@ async function register(req){
         var response = {
             statusCode: 401,
             message: "Email informado se encontra em uso!",
-            data:{
+            body:{
                 username: user
             }
         };
@@ -88,8 +88,8 @@ async function register(req){
 
     var response = {
         statusCode: 200,
+        message: "Usuário criado com sucesso!",
         body : {
-            message: "Usuário criado com sucesso!",
             username: req.body.username,
             email: req.body.email
         }

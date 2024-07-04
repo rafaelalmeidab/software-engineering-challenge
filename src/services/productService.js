@@ -1,13 +1,17 @@
 const db     = require('./dbService.js');
 const helper = require('../helpers/helper.js');
 
-async function createProduct(productData) {
-  const sql    = "INSERT INTO products (title, description, price, category_id, owner_id) VALUES (?, ?, ?, ?, ?)";
-  const values = [productData.title, productData.description, productData.price, productData.category_id, productData.owner_id];
-  const rows   = await db.query(sql, values);
-  const data   = helper.emptyOrRows(rows);
+async function addProduct(productData) {
+  var category_id = productData.category_id !== (undefined || '') ? productData.category_id : null;
 
-  return data;
+  const sql    = "INSERT INTO products (title, description, price, category_id, owner_id) VALUES (?, ?, ?, ?, ?)";
+  const values = [productData.title, productData.description, productData.price, category_id, global.loggedInUserId];
+  const rows   = await db.query(sql, values);
+  // const data   = helper.emptyOrRows(rows);
+
+  const insertId = rows.insertId;
+  const insertedProduct = await findProductById(insertId);
+  return insertedProduct;
 }
 
 async function deleteProduct(productId) {
@@ -37,9 +41,26 @@ async function findProductById(productId) {
   return data;
 }
 
+async function findProductByTitle(productTitle) {
+  const sql  = "SELECT id, title, description, price, category_id, owner_id, created_at, updated_at FROM products WHERE title = ?";
+  const rows = await db.query(sql, [productTitle]);
+  const data = helper.emptyOrRows(rows);
+
+  return data;
+}
+
 async function updateProduct(productData) {
   const sql    = "UPDATE products SET title = ?, description = ?, price = ?, category_id = ?, owner_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-  const values = [productData.title, productData.description, productData.price, productData.category_id, productData.owner_id, productData.id];
+  const values = [productData.title, productData.description, productData.price, productData.category_id, global.loggedInUserId, productData.id];
+  const rows   = await db.query(sql, values);
+  const data   = helper.emptyOrRows(rows);
+
+  return data;
+}
+
+async function updateProductCategory(productData) {
+  const sql    = "UPDATE products category_id = ? WHERE id = ?";
+  const values = [productData.category_id, productData.id];
   const rows   = await db.query(sql, values);
   const data   = helper.emptyOrRows(rows);
 
@@ -47,5 +68,5 @@ async function updateProduct(productData) {
 }
 
 module.exports = {
-  createProduct, deleteProduct, findAllProducts, findProductById, updateProduct
+  addProduct, deleteProduct, findAllProducts, findProductById, findProductByTitle, updateProduct, updateProductCategory
 };

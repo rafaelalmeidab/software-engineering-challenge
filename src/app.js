@@ -1,12 +1,23 @@
 const express = require("express");
-const app = express();
-
+const session = require('express-session');
 const cors = require("cors");
-app.use(cors());
-
 const dotenv = require("dotenv");
-dotenv.config()
 
+dotenv.config();
+const SECRET = process.env.SECRET;
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.use(session({
+    secret: SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Defina como true se estiver usando HTTPS
+}));
+
+global.loggedInUserId = null;
 app.use(express.json());
 
 const routes = require("./api/routes/routes.js");

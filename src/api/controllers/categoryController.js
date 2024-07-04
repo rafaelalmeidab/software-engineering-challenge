@@ -1,8 +1,56 @@
 const dotenv = require("dotenv");
-const { createCategory, deleteCategory, findAllCategories, findCategoryById, updateCategory } = require('../../services/categoryService.js');
+const { addCategory, deleteCategory, findAllCategories, findCategoryById, findCategoryByTitle, updateCategory } = require('../../services/categoryService.js');
 
 dotenv.config();
 const SECRET = process.env.SECRET;
+
+async function add(req) {
+    const categoryData = req.body;
+    const emptyFields = [];
+  
+    if(!categoryData.title) { emptyFields.push("title"); }
+    if(!categoryData.description) { emptyFields.push("description"); }
+  
+    if (emptyFields.length > 0) {
+        let response = {
+            statusCode: 401,
+            message: `Os seguintes campos devem ser preenchidos: ${emptyFields.join(", ")}`
+        };
+
+        return response;
+    }
+  
+    var title = req.body.title;
+    var data = await findCategoryByTitle(title);
+  
+    if (data.length !== 0) {
+        let response = {
+            statusCode: 401,
+            message: "Categoria já cadastrada no banco!",
+            data: {
+                id: data[0].id,
+                title: data[0].title,
+                description: data[0].description
+            }
+        };
+    
+        return response;
+    }
+
+    var data = await addCategory(categoryData);
+  
+    var response = {
+      statusCode: 200,
+      message: "Categoria adicionada com sucesso!",
+      body: {
+        title: categoryData.title,
+        description: categoryData.description,
+        owner_id: categoryData.owner_id
+      }
+    };
+  
+    return response;
+}
 
 async function erase(req) {
     let id = req.body.id;
@@ -12,7 +60,7 @@ async function erase(req) {
         let response = {
             statusCode: 401,
             message: "Categoria inexistente!",
-            data: {
+            body: {
                 category: id
             }
         };
@@ -26,8 +74,8 @@ async function erase(req) {
 
     var response = {
         statusCode: 200,
+        message: "Categoria excluída com sucesso!",
         body: {
-            message: "Categoria excluída com sucesso!",
             category: dataCategory.id,
             name: dataCategory.name,
             description: dataCategory.description
@@ -51,8 +99,8 @@ async function list() {
 
     var response = {
         statusCode: 200,
+        message: "Lista de categorias.",
         body: {
-            message: "Lista de categorias.",
             data: data
         }
     };
@@ -60,4 +108,53 @@ async function list() {
     return response;
 }
 
-module.exports = { erase, list };
+async function update(req){
+    var data = productData = req.body;
+    const emptyFields = [];
+
+    if (!data.title) { emptyFields.push("title"); }
+    if (!data.description) { emptyFields.push("description"); }
+
+    if(emptyFields.length > 0) {
+        let response = {
+            statusCode: 401,
+            message: `Os seguintes campos devem ser preenchidos: ${emptyFields.join(", ")}`
+        }
+
+        return response;
+    }
+    
+    let title = req.body.title;
+    var data  = await findCategoryByTitle(title);
+
+    if(data.length !== 0){
+        let response = {
+            statusCode: 401,
+            message: "Categoria já cadastrada no banco!",
+            data:{
+                id: data[0].id,
+                title: data[0].title,
+                description: data[0].description
+            }
+        };
+    
+        return response;
+    }
+
+    var data = await updateCategory(productData);
+    data = data[0];
+
+    var response = {
+        statusCode: 200,
+        message: "Categoria adicionada com sucesso!",
+        body : {
+            title: data.title,
+            description: data.description,
+            owner_id: data.owner_id
+        }
+    };
+    
+    return response;    
+}
+
+module.exports = { add, erase, list, update };
