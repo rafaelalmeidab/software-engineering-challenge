@@ -127,26 +127,27 @@ async function update(req){
     let title = req.body.title;
     var data  = await findCategoryByTitle(title);
 
-    if(data.length !== 0){
+    if(data.length === 0){
         let response = {
             statusCode: 401,
-            message: "Categoria já cadastrada no banco!",
+            message: "Categoria inexistente.",
             data:{
-                id: data[0].id,
-                title: data[0].title,
-                description: data[0].description
+                title: req.body.title,
+                description: req.body.description
             }
         };
     
         return response;
     }
 
+    productData.id = data[0].id;
+    console.log(productData); return;
     var data = await updateCategory(productData);
     data = data[0];
 
     var response = {
         statusCode: 200,
-        message: "Categoria adicionada com sucesso!",
+        message: "Categoria atualizada com sucesso!",
         body : {
             title: data.title,
             description: data.description,

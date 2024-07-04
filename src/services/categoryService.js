@@ -43,11 +43,11 @@ async function findCategoryByTitle(categoryTitle){
 }
 
 async function updateCategory(categoryData){
-  const sql  = "INSERT INTO users (title, description, owner_id) VALUES ";
-  sql = sql + "('" + categoryData.title + "', '" + categoryData.description + "'," + global.loggedInUserId + ")";
-  const rows = await db.query(sql);
+  var sql = "UPDATE categories SET title = ?, description = ?, owner_id = ? WHERE id = ?";
+  const values = [categoryData.title, categoryData.description, categoryData.id];
+  const rows = await db.query(sql, values);
   const data = helper.emptyOrRows(rows);
-    
+  
   return data;
 }
 
