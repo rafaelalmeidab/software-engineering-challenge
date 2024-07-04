@@ -8,7 +8,7 @@ Esta é uma API em Node.js para login, autenticação de usuários, cadastro de 
 1. Clone este repositório:
 
    ```bash
-   git clone https://github.com/rafaelalmeidab/user-authentication
+   git clone https://github.com/rafaelalmeidab/software-engineering-challenge
 
 
 ## Estrutura de Pastas
@@ -54,3 +54,10 @@ As dependências necessárias para esta API incluem:
 
    ```bash
    npm start
+
+## Arquivos Banco de Dados e Collection
+
+5. Para esta aplicação, foi utilizado o MySQL. Execute a ddl que se encontra na pasta files. A collection também se encontra na pasta files.
+
+Agradeço,
+Rafael Almeida.
