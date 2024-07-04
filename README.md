@@ -1,63 +1,7 @@
-[EN] 
-# User Authentication API
-
-This is a Node.js API for user login and authentication.
-
-## Usage
-
-1. Clone this repository:
-
-   ```bash
-   git clone https://github.com/rafaelalmeidab/user-authentication
-
-
-## Folder Structure
-
-2. Folder structure still being set up:
-- /files
-- /src
-   - /api
-     - /controllers
-     - /middlewares
-     - /routes
-  - /database
-  - /services
-  - /utils
-- .env
-- server.js
-- package.json
-- .gitignore
-- README.md
-
-## Dependencies
-
-The necessary dependencies for this API include:
-
-- express: Web framework for Node.js
-- mongoose: Data modeling library for MongoDB in Node.js
-- dotenv: Load environment variables from a .env file
-- jsonwebtoken: For JWT token generation and verification
-- bcrypt: For password hashing
-- body-parser: Middleware for parsing HTTP request bodies
-
-3. To install these dependencies, run:
-
-   ```bash
-   npm install express mongoose dotenv jsonwebtoken bcrypt body-parser
-
-
-## Initializing the Server
-
-4. To start the server, run:
-
-   ```bash
-   npm start
-
-
 [PT-BR] 
 # API Autenticação Usuários
 
-Esta é uma API em Node.js para login e autenticação de usuários.
+Esta é uma API em Node.js para login, autenticação de usuários, cadastro de produtos e categorias.
 
 ## Uso
 
@@ -70,7 +14,7 @@ Esta é uma API em Node.js para login e autenticação de usuários.
 ## Estrutura de Pastas
 
 2. Estrutura de pastas sendo montada ainda:
-- /files
+- /files (arquivos banco de dados)
 - /src
    - /api
      - /controllers
@@ -80,6 +24,7 @@ Esta é uma API em Node.js para login e autenticação de usuários.
   - /services
   - /utils
 - .env
+- app.js
 - server.js
 - package.json
 - .gitignore
