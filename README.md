@@ -1,5 +1,5 @@
 [PT-BR] 
-# API Autenticação Usuários
+# API Autenticação Usuários, Cadastro de Produtos e Categorias.
 
 Esta é uma API em Node.js para login, autenticação de usuários, cadastro de produtos e categorias.
 
