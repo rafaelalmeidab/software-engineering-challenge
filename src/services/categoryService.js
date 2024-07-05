@@ -44,11 +44,12 @@ async function findCategoryByTitle(categoryTitle){
 
 async function updateCategory(categoryData){
   var sql = "UPDATE categories SET title = ?, description = ?, owner_id = ? WHERE id = ?";
-  const values = [categoryData.title, categoryData.description, categoryData.id];
+  const values = [categoryData.title, categoryData.description, global.loggedInUserId, categoryData.id];
   const rows = await db.query(sql, values);
   const data = helper.emptyOrRows(rows);
   
-  return data;
+  var ret = await findCategoryById(categoryData.id);
+  return ret;
 }
 
 module.exports = {

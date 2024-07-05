@@ -22,7 +22,6 @@ async function findUserByEmail(email){
   const rows = await db.query(sql);
   const data = helper.emptyOrRows(rows);
 
-
   return data;
 }
 

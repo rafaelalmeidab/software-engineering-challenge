@@ -1,5 +1,5 @@
 const dotenv = require("dotenv");
-const { addProduct, deleteProduct, findAllProducts, findProductById, findProductByTitle, updateProduct } = require('../../services/productService.js');
+const { addProduct, deleteProduct, findAllProducts, findProductById, findProductByTitle, updateProduct, updateProductCategory } = require('../../services/productService.js');
 const { findCategoryById } = require("../../services/categoryService.js");
 
 dotenv.config();
@@ -57,7 +57,6 @@ async function add(req){
     return response;    
 }
 
-
 async function category(req){
     var data = productData = req.body;
     const emptyFields = [];
@@ -74,16 +73,15 @@ async function category(req){
         return response;
     }
     
-    let id = req.body.id;
-    var data  = await findProductById(id);
-
-    if(data.length !== 0){
+    let id   = req.body.id;
+    var data = await findProductById(id);
+    
+    if(data.length == 0){
         let response = {
             statusCode: 401,
-            message: "Categoria inexistente.",
+            message: "Produto inexistente.",
             data:{
-                title: req.body.title,
-                description: req.body.description
+                id: req.body.id
             }
         };
     
@@ -105,6 +103,21 @@ async function category(req){
         return response;
     }
 
+    let category_id = req.body.category_id;
+    var data = await findCategoryById(category_id);
+
+    if(data.length === 0){
+        let response = {
+            statusCode: 401,
+            message: "Categoria inexistente!",
+            data:{
+                category_id: category_id
+            }
+        };
+    
+        return response;
+    }   
+    
     var data = await updateProductCategory(productData);
     data = data[0];
 
@@ -253,4 +266,85 @@ async function register(req){
     return response;    
 }
 
-module.exports = { add, category, erase, list, list2, register };
+
+async function update(req){
+    var data = productData = req.body;
+    const emptyFields = [];
+
+    if (!data.id) { emptyFields.push("id"); }
+
+    if(emptyFields.length > 0) {
+        let response = {
+            statusCode: 401,
+            message: `Os seguintes campos devem ser preenchidos: ${emptyFields.join(", ")}`
+        }
+
+        return response;
+    }
+    
+    let id   = req.body.id;
+    var data = await findProductById(id);
+
+    if(data.length === 0){
+        let response = {
+            statusCode: 401,
+            message: "Produto inexistente.",
+            data:{
+                id: req.body.id
+            }
+        };
+    
+        return response;
+    }
+
+    productData.id = data[0].id;
+    
+    const fields = [];
+    const values = [];
+    
+    if (productData.title !== undefined && productData.title !== '') {
+        fields.push("title = ?");
+        values.push(productData.title);
+    }
+    
+    if (productData.description !== undefined && productData.description !== '') {
+        fields.push("description = ?");
+        values.push(productData.description);
+    }
+    
+    if (productData.price !== undefined && productData.price !== '') {
+        fields.push("price = ?");
+        values.push(productData.price);
+    }
+    
+    if (productData.category_id !== undefined && productData.category_id !== '') {
+        fields.push("category_id = ?");
+        values.push(productData.category_id);
+    }
+    
+    fields.push("owner_id = ?");
+    values.push(global.loggedInUserId);
+    
+    fields.push("updated_at = CURRENT_TIMESTAMP");
+    
+    values.push(productData.id);
+    
+    var data = await updateProduct(fields, values, productData.id);
+    data = data[0];
+    
+    var response = {
+        statusCode: 200,
+        message: "Produto atualizado com sucesso!",
+        body : {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            category_id: data.category_id
+        }
+    };
+    
+    return response;    
+}
+
+module.exports = { add, category, erase, list, list2, register, update };

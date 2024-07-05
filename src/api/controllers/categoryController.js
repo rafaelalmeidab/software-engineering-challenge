@@ -112,6 +112,7 @@ async function update(req){
     var data = productData = req.body;
     const emptyFields = [];
 
+    if (!data.id) { emptyFields.push("id"); }
     if (!data.title) { emptyFields.push("title"); }
     if (!data.description) { emptyFields.push("description"); }
 
@@ -124,14 +125,15 @@ async function update(req){
         return response;
     }
     
-    let title = req.body.title;
-    var data  = await findCategoryByTitle(title);
+    let id = req.body.id;
+    var data  = await findCategoryById(id);
 
     if(data.length === 0){
         let response = {
             statusCode: 401,
             message: "Categoria inexistente.",
             data:{
+                id: req.body.id,
                 title: req.body.title,
                 description: req.body.description
             }
@@ -141,7 +143,6 @@ async function update(req){
     }
 
     productData.id = data[0].id;
-    console.log(productData); return;
     var data = await updateCategory(productData);
     data = data[0];
 

@@ -112,7 +112,7 @@ router.post('/product/add', loginAuth.auth, async (req, res, next) => {
 
 router.put('/product/put', loginAuth.auth, async (req, res, next) => {
   try {
-    const ans = await productController.put(req);
+    const ans = await productController.update(req);
     res.status(ans.statusCode).send(ans);
   } catch (err) {
     console.error('Error while putting products', err.message);

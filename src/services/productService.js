@@ -7,7 +7,6 @@ async function addProduct(productData) {
   const sql    = "INSERT INTO products (title, description, price, category_id, owner_id) VALUES (?, ?, ?, ?, ?)";
   const values = [productData.title, productData.description, productData.price, category_id, global.loggedInUserId];
   const rows   = await db.query(sql, values);
-  // const data   = helper.emptyOrRows(rows);
 
   const insertId = rows.insertId;
   const insertedProduct = await findProductById(insertId);
@@ -49,22 +48,23 @@ async function findProductByTitle(productTitle) {
   return data;
 }
 
-async function updateProduct(productData) {
-  const sql    = "UPDATE products SET title = ?, description = ?, price = ?, category_id = ?, owner_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-  const values = [productData.title, productData.description, productData.price, productData.category_id, global.loggedInUserId, productData.id];
-  const rows   = await db.query(sql, values);
-  const data   = helper.emptyOrRows(rows);
+async function updateProduct(fields, values, id) {
+  const sql  = `UPDATE products SET ${fields.join(', ')} WHERE id = ?`;
+  const rows = await db.query(sql, values);
+  const data = helper.emptyOrRows(rows);
 
-  return data;
+  const insertedProduct = await findProductById(id);
+  return insertedProduct;
 }
 
 async function updateProductCategory(productData) {
-  const sql    = "UPDATE products category_id = ? WHERE id = ?";
+  const sql    = "UPDATE products SET category_id = ? WHERE id = ?";
   const values = [productData.category_id, productData.id];
   const rows   = await db.query(sql, values);
   const data   = helper.emptyOrRows(rows);
 
-  return data;
+  const insertedProduct = await findProductById(productData.id);
+  return insertedProduct;
 }
 
 module.exports = {
