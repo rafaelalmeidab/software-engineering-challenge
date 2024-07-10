@@ -77,7 +77,7 @@ async function erase(req) {
         message: "Categoria excluída com sucesso!",
         body: {
             category: dataCategory.id,
-            name: dataCategory.name,
+            title: dataCategory.title,
             description: dataCategory.description
         }
     };
